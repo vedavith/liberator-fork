@@ -2,8 +2,15 @@
     "name": "vedavith/liberator-fork",
     "description": "A proxy for circumventing PHP access modifier restrictions.",
     "keywords": ["access", "modifier", "object", "proxy", "private", "protected", "reflection"],
-    "homepage": "https://github.com/eloquent/liberator",
+    "homepage": "https://github.com/vedavith/liberator-fork",
     "license": "MIT",
+    "support": {
+        "issues": "https://github.com/vedavith/liberator-fork/issues",
+        "source": "https://github.com/vedavith/liberator-fork"
+    },
+    "replace": {
+        "eloquent/liberator": "self.version"
+    },
     "authors": [
         {
             "name": "Erin Millard",
