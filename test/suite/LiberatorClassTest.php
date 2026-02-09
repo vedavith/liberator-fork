@@ -121,6 +121,30 @@ class LiberatorClassTest extends TestCase
         $this->assertFalse(isset($proxy->foo));
     }
 
+    public function testBoundAccessSetGet()
+    {
+        $previous = getenv('LIBERATOR_FORCE_BOUND_ACCESS');
+        putenv('LIBERATOR_FORCE_BOUND_ACCESS=1');
+
+        try {
+            $proxy = new LiberatorClass('Eloquent\Liberator\Test\Fixture\Obj');
+
+            $this->assertEquals('staticPrivateProperty', $proxy->staticPrivateProperty);
+            $proxy->staticPrivateProperty = 'changed';
+            $this->assertEquals('changed', $proxy->staticPrivateProperty);
+            $this->assertTrue(isset($proxy->staticPrivateProperty));
+
+            unset($proxy->staticPrivateProperty);
+            $this->assertFalse(isset($proxy->staticPrivateProperty));
+        } finally {
+            if ($previous === false) {
+                putenv('LIBERATOR_FORCE_BOUND_ACCESS');
+            } else {
+                putenv('LIBERATOR_FORCE_BOUND_ACCESS=' . $previous);
+            }
+        }
+    }
+
     public static function setGetFailureData(): array
     {
         return [
