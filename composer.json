@@ -1,5 +1,5 @@
 {
-    "name": "eloquent/liberator",
+    "name": "vedavith/liberator-fork",
     "description": "A proxy for circumventing PHP access modifier restrictions.",
     "keywords": ["access", "modifier", "object", "proxy", "private", "protected", "reflection"],
     "homepage": "https://github.com/eloquent/liberator",
@@ -9,17 +9,21 @@
             "name": "Erin Millard",
             "email": "ezzatron@gmail.com",
             "homepage": "http://ezzatron.com/"
+        },
+        {
+            "name": "Vedavith Ravula",
+            "email": "veda_ravula@outlook.com"
         }
     ],
     "require": {
-        "php": "^7.4 || ^8",
-        "eloquent/pops": "^5"
+        "php": ">=8.2",
+        "vedavith/pops-fork": "^6.0"
     },
     "require-dev": {
         "eloquent/code-style": "^2",
         "errors/exceptions": "^0.2",
         "friendsofphp/php-cs-fixer": "^3",
-        "phpunit/phpunit": "^9"
+        "phpunit/phpunit": "^11 || ^12"
     },
     "autoload": {
         "psr-4": {

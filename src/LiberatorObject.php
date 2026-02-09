@@ -14,6 +14,7 @@ namespace Eloquent\Liberator;
 use Eloquent\Pops\Exception\InvalidTypeException;
 use Eloquent\Pops\ProxyObject;
 use ReflectionObject;
+use ReflectionProperty;
 
 /**
  * An object proxy that circumvents access modifier restrictions.
@@ -29,7 +30,7 @@ class LiberatorObject extends ProxyObject implements LiberatorProxyInterface
      *
      * @return mixed The result of the method call.
      */
-    public function liberatorCall($method, array &$arguments)
+    public function liberatorCall(string $method, array &$arguments): mixed
     {
         return $this->popsCall($method, $arguments);
     }
@@ -41,7 +42,7 @@ class LiberatorObject extends ProxyObject implements LiberatorProxyInterface
      *
      * @throws InvalidTypeException If the supplied value is not the correct type.
      */
-    public function setPopsValue($object)
+    public function setPopsValue(mixed $object): void
     {
         parent::setPopsValue($object);
 
@@ -57,7 +58,7 @@ class LiberatorObject extends ProxyObject implements LiberatorProxyInterface
      *
      * @return mixed The result of the method call.
      */
-    public function popsCall($method, array &$arguments)
+    public function popsCall(string $method, array &$arguments): mixed
     {
         if ($this->liberatorReflector->hasMethod($method)) {
             $method = $this->liberatorReflector->getMethod($method);
@@ -77,7 +78,7 @@ class LiberatorObject extends ProxyObject implements LiberatorProxyInterface
      * @param string $property The property name.
      * @param mixed  $value    The new value.
      */
-    public function __set($property, $value)
+    public function __set(string $property, mixed $value): void
     {
         if ($propertyReflector = $this->liberatorPropertyReflector($property)) {
             $propertyReflector->setValue($this->popsValue(), $value);
@@ -95,7 +96,7 @@ class LiberatorObject extends ProxyObject implements LiberatorProxyInterface
      *
      * @return mixed The property value.
      */
-    public function __get($property)
+    public function __get(string $property): mixed
     {
         if ($propertyReflector = $this->liberatorPropertyReflector($property)) {
             return $this->popsProxySubValue(
@@ -113,7 +114,7 @@ class LiberatorObject extends ProxyObject implements LiberatorProxyInterface
      *
      * @return bool True if the property exists.
      */
-    public function __isset($property)
+    public function __isset(string $property): bool
     {
         if ($propertyReflector = $this->liberatorPropertyReflector($property)) {
             return null !== $propertyReflector->getValue($this->popsValue());
@@ -127,7 +128,7 @@ class LiberatorObject extends ProxyObject implements LiberatorProxyInterface
      *
      * @param string $property The property name.
      */
-    public function __unset($property)
+    public function __unset(string $property): void
     {
         if ($propertyReflector = $this->liberatorPropertyReflector($property)) {
             $propertyReflector->setValue($this->popsValue(), null);
@@ -143,7 +144,7 @@ class LiberatorObject extends ProxyObject implements LiberatorProxyInterface
      *
      * @return string The proxy class.
      */
-    protected static function popsProxyClass()
+    protected static function popsProxyClass(): string
     {
         return 'Eloquent\Liberator\Liberator';
     }
@@ -153,7 +154,7 @@ class LiberatorObject extends ProxyObject implements LiberatorProxyInterface
      *
      * @return ReflectionObject The class reflector.
      */
-    protected function liberatorReflector()
+    protected function liberatorReflector(): ReflectionObject
     {
         return $this->liberatorReflector;
     }
@@ -165,7 +166,7 @@ class LiberatorObject extends ProxyObject implements LiberatorProxyInterface
      *
      * @return ReflectionProperty|null The property reflector, or null if no such property exists.
      */
-    protected function liberatorPropertyReflector($property)
+    protected function liberatorPropertyReflector(string $property): ?ReflectionProperty
     {
         $classReflector = $this->liberatorReflector();
 
@@ -183,5 +184,5 @@ class LiberatorObject extends ProxyObject implements LiberatorProxyInterface
         return null;
     }
 
-    private $liberatorReflector;
+    private ReflectionObject $liberatorReflector;
 }

@@ -14,6 +14,7 @@ namespace Eloquent\Liberator;
 use Eloquent\Pops\Exception\InvalidTypeException;
 use Eloquent\Pops\Proxy;
 use Eloquent\Pops\ProxyClassInterface;
+use Eloquent\Pops\ProxyInterface;
 
 /**
  * A proxy that circumvents access modifier restrictions.
@@ -26,9 +27,9 @@ class Liberator extends Proxy
      * @param mixed     $value       The value to wrap.
      * @param bool|null $isRecursive True if the value should be recursively proxied.
      *
-     * @return LiberatorProxyInterface The proxied value.
+     * @return ProxyInterface The proxied value.
      */
-    public static function liberate($value, $isRecursive = null)
+    public static function liberate(mixed $value, ?bool $isRecursive = null): ProxyInterface
     {
         return static::proxy($value, $isRecursive);
     }
@@ -42,7 +43,7 @@ class Liberator extends Proxy
      * @return ProxyClassInterface  The non-static class proxy.
      * @throws InvalidTypeException If the supplied value is not the correct type.
      */
-    public static function liberateClass($class, $isRecursive = null)
+    public static function liberateClass(string $class, ?bool $isRecursive = null): ProxyClassInterface
     {
         return static::proxyClass($class, $isRecursive);
     }
@@ -57,10 +58,10 @@ class Liberator extends Proxy
      * @return string The static class proxy.
      */
     public static function liberateClassStatic(
-        $class,
-        $isRecursive = null,
-        $proxyClass = null
-    ) {
+        string $class,
+        ?bool $isRecursive = null,
+        ?string $proxyClass = null
+    ): string {
         return static::proxyClassStatic($class, $isRecursive, $proxyClass);
     }
 
@@ -69,7 +70,7 @@ class Liberator extends Proxy
      *
      * @return string The array proxy class.
      */
-    protected static function proxyArrayClass()
+    protected static function proxyArrayClass(): string
     {
         return 'Eloquent\Liberator\LiberatorArray';
     }
@@ -79,7 +80,7 @@ class Liberator extends Proxy
      *
      * @return string The class proxy class.
      */
-    protected static function proxyClassClass()
+    protected static function proxyClassClass(): string
     {
         return 'Eloquent\Liberator\LiberatorClass';
     }
@@ -89,7 +90,7 @@ class Liberator extends Proxy
      *
      * @return string The object proxy class.
      */
-    protected static function proxyObjectClass()
+    protected static function proxyObjectClass(): string
     {
         return 'Eloquent\Liberator\LiberatorObject';
     }

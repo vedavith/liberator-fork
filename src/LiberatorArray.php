@@ -23,7 +23,7 @@ class LiberatorArray extends ProxyArray implements LiberatorProxyInterface
      *
      * @return string The proxy class.
      */
-    protected static function popsProxyClass()
+    protected static function popsProxyClass(): string
     {
         return 'Eloquent\Liberator\Liberator';
     }

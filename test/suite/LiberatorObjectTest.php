@@ -15,10 +15,11 @@ use Eloquent\Liberator\Test\Fixture\ChildObject;
 use Eloquent\Liberator\Test\Fixture\Obj;
 use Eloquent\Liberator\Test\Fixture\Overload;
 use Eloquent\Liberator\Test\TestCase;
+use PHPUnit\Framework\Attributes\DataProvider;
 
 class LiberatorObjectTest extends TestCase
 {
-    public function fixtureData()
+    public static function fixtureData(): array
     {
         $data = [];
 
@@ -34,9 +35,9 @@ class LiberatorObjectTest extends TestCase
     }
 
     /**
-     * @dataProvider fixtureData
      */
-    public function testRecursive(Obj $object)
+    #[DataProvider('fixtureData')]
+    public function testRecursive(Obj $object, LiberatorObject $unusedProxy)
     {
         $recursiveProxy = new LiberatorObject($object, true);
 
@@ -49,8 +50,8 @@ class LiberatorObjectTest extends TestCase
     }
 
     /**
-     * @dataProvider fixtureData
      */
+    #[DataProvider('fixtureData')]
     public function testCall(Obj $object, LiberatorObject $proxy)
     {
         $this->assertLiberatorCall($proxy, 'publicMethod', ['foo', 'bar']);
@@ -60,8 +61,8 @@ class LiberatorObjectTest extends TestCase
     }
 
     /**
-     * @dataProvider fixtureData
      */
+    #[DataProvider('fixtureData')]
     public function testCallByReference(Obj $object, LiberatorObject $proxy)
     {
         $variable = null;
@@ -72,8 +73,8 @@ class LiberatorObjectTest extends TestCase
     }
 
     /**
-     * @dataProvider fixtureData
      */
+    #[DataProvider('fixtureData')]
     public function testSetGet(Obj $object, LiberatorObject $proxy)
     {
         $this->assertTrue(isset($proxy->publicProperty));

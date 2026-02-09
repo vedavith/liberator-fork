@@ -11,6 +11,7 @@
 
 namespace Eloquent\Liberator\Test\Fixture;
 
+#[\AllowDynamicProperties]
 class Overload extends Obj
 {
     public function __set($property, $value)
