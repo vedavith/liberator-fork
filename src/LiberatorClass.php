@@ -72,10 +72,26 @@ class LiberatorClass extends ProxyClass implements LiberatorProxyInterface
     {
         if ($this->liberatorReflector()->hasMethod($method)) {
             $method = $this->liberatorReflector()->getMethod($method);
-            $method->setAccessible(true);
+            if ($this->liberatorUseSetAccessible()) {
+                $method->setAccessible(true);
+                return static::popsProxySubValue(
+                    $method->invokeArgs(null, $arguments),
+                    $this->isPopsRecursive()
+                );
+            }
+
+            $declaringClass = $method->getDeclaringClass()->getName();
+            $methodName = $method->getName();
+            $methodInvoker = \Closure::bind(
+                static function (string $method, array &$arguments) {
+                    return self::{$method}(...$arguments);
+                },
+                null,
+                $declaringClass
+            );
 
             return static::popsProxySubValue(
-                $method->invokeArgs(null, $arguments),
+                $methodInvoker($methodName, $arguments),
                 $this->isPopsRecursive()
             );
         }
@@ -92,7 +108,20 @@ class LiberatorClass extends ProxyClass implements LiberatorProxyInterface
     public function __set(string $property, mixed $value): void
     {
         if ($propertyReflector = $this->liberatorPropertyReflector($property)) {
-            $propertyReflector->setValue(null, $value);
+            if ($this->liberatorUseSetAccessible()) {
+                $propertyReflector->setValue(null, $value);
+            } else {
+                $declaringClass = $propertyReflector->getDeclaringClass()->getName();
+                $propertyAccessor = \Closure::bind(
+                    static function & (string $property) {
+                        return self::${$property};
+                    },
+                    null,
+                    $declaringClass
+                );
+                $targetProperty = &$propertyAccessor($property);
+                $targetProperty = $value;
+            }
 
             return;
         }
@@ -116,6 +145,23 @@ class LiberatorClass extends ProxyClass implements LiberatorProxyInterface
     public function __get(string $property): mixed
     {
         if ($propertyReflector = $this->liberatorPropertyReflector($property)) {
+            if (!$this->liberatorUseSetAccessible()) {
+                $declaringClass = $propertyReflector->getDeclaringClass()->getName();
+                $propertyAccessor = \Closure::bind(
+                    static function & (string $property) {
+                        return self::${$property};
+                    },
+                    null,
+                    $declaringClass
+                );
+                $propertyValue = $propertyAccessor($property);
+
+                return static::popsProxySubValue(
+                    $propertyValue,
+                    $this->isPopsRecursive()
+                );
+            }
+
             return static::popsProxySubValue(
                 $propertyReflector->getValue(null),
                 $this->isPopsRecursive()
@@ -141,7 +187,21 @@ class LiberatorClass extends ProxyClass implements LiberatorProxyInterface
     public function __isset(string $property): bool
     {
         if ($propertyReflector = $this->liberatorPropertyReflector($property)) {
-            return null !== $propertyReflector->getValue(null);
+            if ($this->liberatorUseSetAccessible()) {
+                return null !== $propertyReflector->getValue(null);
+            }
+
+            $declaringClass = $propertyReflector->getDeclaringClass()->getName();
+            $propertyAccessor = \Closure::bind(
+                static function & (string $property) {
+                    return self::${$property};
+                },
+                null,
+                $declaringClass
+            );
+            $propertyValue = $propertyAccessor($property);
+
+            return null !== $propertyValue;
         }
 
         return parent::__isset($property);
@@ -155,7 +215,20 @@ class LiberatorClass extends ProxyClass implements LiberatorProxyInterface
     public function __unset(string $property): void
     {
         if ($propertyReflector = $this->liberatorPropertyReflector($property)) {
-            $propertyReflector->setValue(null, null);
+            if ($this->liberatorUseSetAccessible()) {
+                $propertyReflector->setValue(null, null);
+            } else {
+                $declaringClass = $propertyReflector->getDeclaringClass()->getName();
+                $propertyAccessor = \Closure::bind(
+                    static function & (string $property) {
+                        return self::${$property};
+                    },
+                    null,
+                    $declaringClass
+                );
+                $propertyValue = &$propertyAccessor($property);
+                $propertyValue = null;
+            }
 
             return;
         }
@@ -203,7 +276,9 @@ class LiberatorClass extends ProxyClass implements LiberatorProxyInterface
         while ($classReflector) {
             if ($classReflector->hasProperty($property)) {
                 $propertyReflector = $classReflector->getProperty($property);
-                $propertyReflector->setAccessible(true);
+                if ($this->liberatorUseSetAccessible()) {
+                    $propertyReflector->setAccessible(true);
+                }
 
                 return $propertyReflector;
             }
@@ -215,4 +290,10 @@ class LiberatorClass extends ProxyClass implements LiberatorProxyInterface
     }
 
     private ReflectionClass $liberatorReflector;
+
+    private function liberatorUseSetAccessible(): bool
+    {
+        return \PHP_VERSION_ID < 80500
+            && ('1' !== getenv('LIBERATOR_FORCE_BOUND_ACCESS'));
+    }
 }
