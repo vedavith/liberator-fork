@@ -1,7 +1,7 @@
 name: CI (scheduled)
 on:
   schedule:
-    - cron: * 14 * * 0 # Every day 2PM UTC = Monday 12AM AEST
+    - cron: "30 7 * * *" # Every day 07:30 UTC (13:00 IST)
 jobs:
   test:
     runs-on: ubuntu-latest
