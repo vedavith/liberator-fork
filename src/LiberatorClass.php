@@ -81,6 +81,7 @@ class LiberatorClass extends ProxyClass implements LiberatorProxyInterface
             }
 
             $declaringClass = $method->getDeclaringClass()->getName();
+            $methodName = $method->getName();
             $methodInvoker = \Closure::bind(
                 static function (string $method, array &$arguments) {
                     return self::{$method}(...$arguments);
@@ -90,7 +91,7 @@ class LiberatorClass extends ProxyClass implements LiberatorProxyInterface
             );
 
             return static::popsProxySubValue(
-                $methodInvoker($method, $arguments),
+                $methodInvoker($methodName, $arguments),
                 $this->isPopsRecursive()
             );
         }

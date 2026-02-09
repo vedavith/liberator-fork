@@ -72,6 +72,7 @@ class LiberatorObject extends ProxyObject implements LiberatorProxyInterface
             }
 
             $declaringClass = $method->getDeclaringClass()->getName();
+            $methodName = $method->getName();
             $methodInvoker = \Closure::bind(
                 function (string $method, array &$arguments) {
                     return $this->{$method}(...$arguments);
@@ -80,7 +81,7 @@ class LiberatorObject extends ProxyObject implements LiberatorProxyInterface
                 $declaringClass
             );
 
-            return $this->popsProxySubValue($methodInvoker($method, $arguments));
+            return $this->popsProxySubValue($methodInvoker($methodName, $arguments));
         }
 
         return parent::popsCall($method, $arguments);
