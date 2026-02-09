@@ -11,6 +11,7 @@
 
 namespace Eloquent\Liberator\Test\Fixture;
 
+#[\AllowDynamicProperties]
 class Obj
 {
     public static function staticPublicMethod()

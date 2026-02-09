@@ -12,6 +12,7 @@
 namespace Eloquent\Liberator;
 
 use Eloquent\Liberator\Test\TestCase;
+use PHPUnit\Framework\Attributes\DataProvider;
 
 class LiberatorClassTest extends TestCase
 {
@@ -21,7 +22,7 @@ class LiberatorClassTest extends TestCase
         $this->proxy = new LiberatorClass($this->class);
     }
 
-    public function fixtureData()
+    public static function fixtureData(): array
     {
         $data = [];
 
@@ -36,10 +37,8 @@ class LiberatorClassTest extends TestCase
         return $data;
     }
 
-    /**
-     * @dataProvider fixtureData
-     */
-    public function testRecursive($class)
+    #[DataProvider('fixtureData')]
+    public function testRecursive($class, LiberatorClass $unusedProxy)
     {
         $recursiveProxy = new LiberatorClass($class, true);
 
@@ -51,9 +50,7 @@ class LiberatorClassTest extends TestCase
         $this->assertInstanceOf('Eloquent\Pops\ProxyPrimitive', $recursiveProxy->staticString());
     }
 
-    /**
-     * @dataProvider fixtureData
-     */
+    #[DataProvider('fixtureData')]
     public function testCall($class, LiberatorClass $proxy)
     {
         $this->assertLiberatorCall($proxy, 'staticPublicMethod', ['foo', 'bar']);
@@ -81,9 +78,7 @@ class LiberatorClassTest extends TestCase
         $this->assertSame('foo', $variable);
     }
 
-    /**
-     * @dataProvider fixtureData
-     */
+    #[DataProvider('fixtureData')]
     public function testSetGet($class, LiberatorClass $proxy)
     {
         $this->assertTrue(isset($proxy->staticPublicProperty));
@@ -126,7 +121,7 @@ class LiberatorClassTest extends TestCase
         $this->assertFalse(isset($proxy->foo));
     }
 
-    public function setGetFailureData()
+    public static function setGetFailureData(): array
     {
         return [
             ['__set', ['foo', 'bar']],
@@ -135,9 +130,7 @@ class LiberatorClassTest extends TestCase
         ];
     }
 
-    /**
-     * @dataProvider setGetFailureData
-     */
+    #[DataProvider('setGetFailureData')]
     public function testSetGetFailure($method, array $arguments)
     {
         $this->expectException('LogicException');

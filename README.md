@@ -1,16 +1,18 @@
-> # No longer maintained
->
-> This package is no longer maintained. See [this statement] for more info.
->
-> [this statement]: https://gist.github.com/ezzatron/713a548735febe3d76f8ca831bc895c0
-
 # Liberator
 
 *A proxy for circumventing PHP access modifier restrictions.*
 
+>  - This is a maintained fork of the unmaintained `eloquent/liberator`. Package name is `vedavith/liberator-fork` and it targets PHP 8.2+ with PHPUnit 11/12 for development.
+>  - This is a maintained fork of [eloquent/liberator] originally created by Erin Millard.
+
 ## Installation and documentation
 
-- Available as [Composer] package [eloquent/liberator].
+* Available as [Composer] package [vedavith/liberator-fork]: (maintained fork of `eloquent/liberator`).
+* Requires PHP 8.2 or later.
+
+```
+  composer require vedavith/liberator-fork
+```
 
 ## What is Liberator?
 
@@ -105,4 +107,5 @@ so accessing static properties in this way is a not as elegant as it could be.
 [white-box]: http://en.wikipedia.org/wiki/White-box_testing
 
 [composer]: http://getcomposer.org/
-[eloquent/liberator]: https://packagist.org/packages/eloquent/liberator
+[eloquent/pops]: https://packagist.org/packages/eloquent/pops
+[vedavith/liberator-fork]: https://packagist.org/packages/vedavith/liberator-fork

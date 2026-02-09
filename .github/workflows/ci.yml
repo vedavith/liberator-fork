@@ -8,27 +8,25 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        php: ['7.4', '8.0', '8.1']
+        php: ['8.2', '8.3', '8.4', '8.5']
     name: PHP ${{ matrix.php }}
     steps:
-    - name: Checkout
-      uses: actions/checkout@v1
-    - name: Set up PHP
-      uses: shivammathur/setup-php@v2
-      with:
-        php-version: ${{ matrix.php }}
-        extensions: mbstring
-        coverage: pcov
-    - name: Check PHP version
-      run: php -v
-    - name: Install dependencies
-      run: make vendor
-    - name: Make
-      if: ${{ startsWith(matrix.php, '7.') }}
-      run: make ci
-    - name: Make
-      if: ${{ startsWith(matrix.php, '8.') }}
-      run: make artifacts/coverage/phpunit/clover.xml
-    - name: Publish coverage
-      if: success()
-      uses: codecov/codecov-action@v2
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Set up PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php }}
+          extensions: mbstring
+          coverage: pcov
+      - name: Check PHP version
+        run: php -v
+      - name: Install dependencies
+        run: composer install --no-interaction --prefer-dist
+      - name: Run tests with coverage
+        run: |
+          mkdir -p artifacts/test artifacts/coverage/phpunit
+          vendor/bin/phpunit -c phpunit.xml --coverage-clover artifacts/coverage/phpunit/clover.xml
+      - name: Publish coverage
+        if: success()
+        uses: codecov/codecov-action@v4

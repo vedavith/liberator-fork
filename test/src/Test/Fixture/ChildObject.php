@@ -11,6 +11,7 @@
 
 namespace Eloquent\Liberator\Test\Fixture;
 
+#[\AllowDynamicProperties]
 class ChildObject extends Obj
 {
 }
